@@ -1,33 +1,26 @@
 #include <iostream>
 #include "Cube.h"
-#include "Face.h"
+#include <vector>
+#include <fstream>
+#include <ctime>
 
 using namespace std;
 
 int main()
 {
+	vector<int> v1;
+	vector<vector<int>> v2;
+	vector<vector<vector<int>>> v3;
+	vector<vector<vector<vector<int>>>>	bars;
+	int value = 0;
 
-	int bars[6][2][3][3] = {
-		{{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}},
-		{{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}, {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}},
-		{{{2, 2, 2}, {2, 2, 2}, {2, 2, 2}}, {{2, 2, 2}, {2, 2, 2}, {2, 2, 2}}},
-		{{{3, 3, 3}, {3, 3, 3}, {3, 3, 3}}, {{3, 3, 3}, {3, 3, 3}, {3, 3, 3}}},
-		{{{4, 4, 4}, {4, 4, 4}, {4, 4, 4}}, {{4, 4, 4}, {4, 4, 4}, {4, 4, 4}}},
-		{{{5, 5, 5}, {5, 5, 5}, {5, 5, 5}}, {{5, 5, 5}, {5, 5, 5}, {5, 5, 5}}}
-	};
+	//Считывание кубика из файла..
 
+	//ifstream in("test.txt");
 
-	
-	
-	
+	//char ch;
 
-	/*string path = "test.txt";
-	ifstream fin;
-	fin.open(path);
-	char ch;
-	int value;
-
-	while (fin.get(ch))
+	/*if (in.is_open())
 	{
 		for (int i = 0; i < 6; i++)
 		{
@@ -37,23 +30,108 @@ int main()
 				{
 					for (int m = 0; m < 3; m++)
 					{
-						int value = ch - '0';
-						bars[i][j][k][m] = value;
-						cout << bars[i][j][k][m];
+						in.get(ch);
+						value = ch - '0';
+						v1.push_back(value);
 					}
+					v2.push_back(v1);
+					v1.clear();
 				}
+				v3.push_back(v2);
+				v2.clear();
 			}
+			bars.push_back(v3);
+			v3.clear();
 		}
 	}
-	fin.close();*/
+	else
+	{
+		cout << "data error";
+	}*/
+	//in.close();    
+
+
+
+
+	//Случаное заполнение кубика..
+
+	int barsLimit[6] = {0, 0, 0, 0, 0, 0};
+	srand(time(0));
+	for (int i = 0; i < 6; i++)
+	{
+		for (int j = 0; j < 1; j++)
+		{
+			for (int k = 0; k < 3; k++)
+			{
+				for (int m = 0; m < 3; m++)
+				{
+					while (true)
+					{
+						value = 0 + rand() % 6;
+						if (barsLimit[value] < 9)
+						{
+							break;
+						}
+					}
+					barsLimit[value]++;
+					v1.push_back(value);
+				}
+				v2.push_back(v1);
+				v1.clear();
+			}
+			v3.push_back(v2);
+			v2.clear();
+		}
+		bars.push_back(v3);
+		v3.clear();
+	}
+	
+	for (int i = 0; i < 6; i++)
+	{
+		for (int j = 0; j < 1; j++)
+		{
+			for (int k = 0; k < 3; k++)
+			{
+				for (int m = 0; m < 3; m++)
+				{
+					value = bars[i][j][m][k];
+					v1.push_back(value);
+				}
+				v2.push_back(v1);
+				v1.clear();
+			}
+			bars[i].push_back(v2);
+			v2.clear();
+		}
+	}
 
 
 	Cube cube = Cube(bars);
 
-	cube.rotate(0, 3, 2);
-	cube.rotate(0, 2, 2);
 	
-	cube.print();
-
-
+	
+	int a = 1;
+	while (a != 0)
+	{
+		cout << endl << "1. check" << endl << "2. print" << endl << "3. rotate" << endl << "0. exit" << endl << endl;
+		cin >> a;
+		system("cls");
+		switch (a)
+		{
+		case 1:
+			cout << cube.check() << endl;
+			break;
+		case 2:
+			cube.print();
+			break;
+		case 3:
+			cout << "Enter face(0..5), diraction(0 = up, 1 = down, 2 = left, 3 = right), line(0..2)" << endl;
+			int face, diraction, line;
+			cin >> face >> diraction >> line;
+			cube.rotate(face, diraction, line);
+			break;
+		}
+		
+	}
+	
 }
