@@ -1,25 +1,18 @@
 #include "Face.h"
+#include <vector>
 
 Face::Face()
 {
 	index = 0;
-	naighbor = { {"topFace", 0},
+	naighbor = {	{"topFace", 0},
 					{"bottomFace", 0},
 					{"leftFace", 0},
 					{"rightFace", 0}
 	};
 
-	for (int i = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			vertical[i][j] = 0;
-			horizontal[i][j] = 0;
-		}
-	}
 }
 
-Face::Face(int valueIndex, int valueVertical[3][3], int valueHorizontal[3][3])
+Face::Face(int valueIndex, vector<vector<int>> &valueVertical, vector<vector<int>> &valueHorizontal)
 {
 	index = valueIndex;
 	if (index == 0)
@@ -71,12 +64,7 @@ Face::Face(int valueIndex, int valueVertical[3][3], int valueHorizontal[3][3])
 		};
 	}
 
-	for (int i = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			vertical[i][j] = valueVertical[i][j];
-			horizontal[i][j] = valueHorizontal[i][j];
-		}
-	}
+	vertical = valueVertical;
+	horizontal = valueHorizontal;
+
 }
