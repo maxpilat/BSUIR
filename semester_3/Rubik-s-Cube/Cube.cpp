@@ -1,43 +1,45 @@
 #include "Cube.h"
+#include <vector>
 
 void Cube::changeOrientToLeft(int neighbor)
 {
-	int helper[3][3];
-	memmove(helper, faces[neighbor].vertical, sizeof(int) * cubeSize * cubeSize);
+	vector<vector<int>> helper;
+	helper = faces[neighbor].vertical;
+
 	for (int i = 0; i < cubeSize; i++)
 	{
-		for (int j = 0; j < cubeSize; j++)
-		{
-			faces[neighbor].vertical[i][j] = faces[neighbor].horizontal[i][cubeSize - 1 - j];
-		}
-		memmove(faces[neighbor].horizontal[i], helper[cubeSize - 1 - i], sizeof(int) * cubeSize);
+		reverse(faces[neighbor].horizontal[i].begin(), faces[neighbor].horizontal[i].end());
+		faces[neighbor].vertical[i] = faces[neighbor].horizontal[i];
 	}
+	reverse(helper.begin(), helper.end());
+	faces[neighbor].horizontal = helper;
+	
 }
 
 void Cube::changeOrientToRight(int neighbor)
 {
-	int helper[3][3];
-	memmove(helper, faces[neighbor].horizontal, sizeof(int) * cubeSize * cubeSize);
+	vector<vector<int>> helper;
+	helper = faces[neighbor].horizontal;
+
 	for (int i = 0; i < cubeSize; i++)
 	{
-		for (int j = 0; j < cubeSize; j++)
-		{
-			faces[neighbor].horizontal[i][j] = faces[neighbor].vertical[i][cubeSize - 1 - j];
-		}
-		memmove(faces[neighbor].vertical[i], helper[cubeSize - 1 - i], sizeof(int) * cubeSize);
+		reverse(faces[neighbor].vertical[i].begin(), faces[neighbor].vertical[i].end());
+		faces[neighbor].horizontal[i] = faces[neighbor].vertical[i];
 	}
+	reverse(helper.begin(), helper.end());
+	faces[neighbor].vertical = helper;
 }
 
 void Cube::rotateY(int face, int line, string currentNaighbor)
 {
 	Face currentFace = faces[face];
-	int helper[3];
+	vector<int> helper;
 
-	memmove(helper, faces[face].vertical[line], sizeof(int) * cubeSize);
+	helper = faces[face].vertical[line];
 
 	for (int i = 0; i < 3; i++)
 	{
-		memmove(faces[currentFace.index].vertical[line], faces[currentFace.naighbor[currentNaighbor]].vertical[line], sizeof(int) * cubeSize);
+		faces[currentFace.index].vertical[line] = faces[currentFace.naighbor[currentNaighbor]].vertical[line];
 
 		for (int j = 0; j < 3; j++)
 		{
@@ -45,7 +47,7 @@ void Cube::rotateY(int face, int line, string currentNaighbor)
 		}
 		currentFace = faces[currentFace.naighbor[currentNaighbor]];
 	}
-	memmove(faces[currentFace.index].vertical[line], helper, sizeof(int) * cubeSize);
+	faces[currentFace.index].vertical[line] = helper;
 
 	for (int j = 0; j < 3; j++)
 	{
@@ -56,13 +58,12 @@ void Cube::rotateY(int face, int line, string currentNaighbor)
 void Cube::rotateX(int face, int line, string currentNaighbor)
 {
 	Face currentFace = faces[face];
-	int helper[3];
-
-	memmove(helper, faces[face].horizontal[line], sizeof(int) * cubeSize);
+	vector<int> helper;
+	helper = faces[face].horizontal[line];
 
 	for (int i = 0; i < 3; i++)
 	{
-		memmove(faces[currentFace.index].horizontal[line], faces[currentFace.naighbor[currentNaighbor]].horizontal[line], sizeof(int) * cubeSize);
+		faces[currentFace.index].horizontal[line] = faces[currentFace.naighbor[currentNaighbor]].horizontal[line];
 
 		for (int j = 0; j < 3; j++)
 		{
@@ -70,7 +71,7 @@ void Cube::rotateX(int face, int line, string currentNaighbor)
 		}
 		currentFace = faces[currentFace.naighbor[currentNaighbor]];
 	}
-	memmove(faces[currentFace.index].horizontal[line], helper, sizeof(int) * cubeSize);
+	faces[currentFace.index].horizontal[line] = helper;
 
 	for (int j = 0; j < 3; j++)
 	{
@@ -78,9 +79,9 @@ void Cube::rotateX(int face, int line, string currentNaighbor)
 	}
 }
 
-Cube::Cube(int bars[6][2][3][3])
+Cube::Cube(vector<vector<vector<vector<int>>>> &bars)
 {
-	cubeSize = size(bars[0][0]);
+	cubeSize = bars[0][0].size();
 
 	for (int i = 0; i < 6; i++)
 	{
@@ -88,6 +89,7 @@ Cube::Cube(int bars[6][2][3][3])
 	}
 }
 
+/// \code 
 void Cube::print()
 {
 	//2
@@ -131,7 +133,9 @@ void Cube::print()
 	}
 	cout << endl;
 }
+/// \endcode
 
+/// \code
 void Cube::rotate(int face, int direction, int line)
 {
 	Face currentFace = faces[face];
@@ -189,7 +193,9 @@ void Cube::rotate(int face, int direction, int line)
 		rotateX(face, line, "leftFace");
 	}
 }
+/// \endcode
 
+/// \code
 bool Cube::check()
 {
 	for (int i = 0; i < size(faces); i++)
@@ -207,3 +213,4 @@ bool Cube::check()
 	}
 	return true;
 }
+/// \endcode
