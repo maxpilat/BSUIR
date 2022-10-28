@@ -9,7 +9,7 @@ class Cube
 {
 private:
 
-	int	cubeSize; 
+	int cubeSize; 
 	Face faces[6];
 
 	void changeOrientToLeft(int neighbor); 
