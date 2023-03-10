@@ -4,9 +4,9 @@
 | :-------------------------------------: | :----------------------------------------------------------: |
 |                  help                   |                  to show available commands                  |
 |                add-patch                |                         to add patch                         |
+|       remove-patch <patch_index>        |                       to remove patch                        |
 |  add-plant <plant_name> <patch_index>   |                         to add plant                         |
 | remove-plant <plant_name> <patch_index> |                       to remove plant                        |
-|       remove-patch <patch_index>        |                       to remove patch                        |
 |         add-pests <patch_index>         |                  to add pests to the patch                   |
 |        add-disease <patch_index>        |                 to add disease to the patch                  |
 |       compost-patch <patch_index>       | to compost patch (removes all diseases and pests from patch) |
