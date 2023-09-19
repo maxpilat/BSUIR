@@ -1,0 +1,3 @@
+const ALPHABET: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+export { ALPHABET };
