@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Система поиска данных</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f4;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      input[type='text'] {
+        padding: 10px;
+        margin-right: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 300px;
+      }
+
+      button {
+        padding: 10px 15px;
+        background-color: #009688;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #067f73;
+      }
+
+      h2 {
+        margin-top: 20px;
+        color: #333;
+      }
+
+      #results {
+        margin-top: 10px;
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .document {
+        margin: 10px 0;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .document:last-child {
+        border-bottom: none;
+      }
+
+      strong {
+        color: #009688;
+      }
+
+      .document-date {
+        color: #666;
+        font-size: 12px;
+        margin-top: 10px;
+        text-align: end;
+      }
+
+      .popup {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+      }
+
+      .popup-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: left;
+        width: 300px;
+      }
+
+      .popup-header {
+        display: flex;
+        justify-content: right;
+      }
+
+      .close-btn {
+        background-color: transparent;
+        color: #333;
+        padding: 0;
+      }
+      .close-btn:hover {
+        background-color: transparent;
+      }
+    </style>
+    <script>
+      async function fetchDocuments() {
+        try {
+          const response = await fetch('http://localhost:3000/documents');
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+              errorData.message || 'Ошибка при получении документов'
+            );
+          }
+          const documents = await response.json();
+          displayDocuments(documents);
+        } catch (err) {
+          console.error(err);
+          alert(err.message);
+        }
+      }
+
+      async function searchDocuments() {
+        const query = document.getElementById('query').value;
+        try {
+          const response = await fetch(
+            `http://localhost:3000/search?query=${encodeURIComponent(query)}`
+          );
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+              errorData.message || 'Ошибка при поиске документов'
+            );
+          }
+          const filteredDocuments = await response.json();
+          displayDocuments(filteredDocuments);
+        } catch (err) {
+          console.error('Ошибка:', err.message);
+          alert(err.message);
+        }
+      }
+
+      function displayDocuments(documents) {
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
+
+        if (documents.length === 0) {
+          resultsDiv.innerHTML = '<p>Нет документов для отображения.</p>';
+          return;
+        }
+
+        documents.forEach((doc) => {
+          const docElement = document.createElement('div');
+          docElement.className = 'document';
+          docElement.innerHTML = `<strong>${doc.name}</strong>: ${doc.data}`;
+
+          const dateElement = document.createElement('div');
+          dateElement.className = 'document-date';
+          dateElement.textContent = new Date(doc.createdAt).toLocaleString(
+            'ru-RU',
+            {
+              timeZone: 'UTC',
+            }
+          );
+
+          docElement.appendChild(dateElement);
+          resultsDiv.appendChild(docElement);
+        });
+      }
+
+      function showPopup() {
+        document.getElementById('popup').style.display = 'flex';
+      }
+
+      function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Поиск документов</h1>
+    <input type="text" id="query" placeholder="Введите запрос..." />
+    <button onclick="searchDocuments()">Поиск</button>
+    <button onclick="fetchDocuments()">Показать все документы</button>
+    <button onclick="showPopup()">Помощь</button>
+
+    <h2>Результаты:</h2>
+    <div id="results"></div>
+
+    <div id="popup" class="popup">
+      <div class="popup-content">
+        <div class="popup-header">
+          <button class="close-btn" onclick="closePopup()">&#x2715;</button>
+        </div>
+        <h2 style="margin-top: 0">Помощь</h2>
+        <p>
+          Операторы:<br />
+          "AND", "OR", "NOT", "("", ")"
+        </p>
+        <p>
+          Пример запроса:<br />
+          (fashion OR installation) OR tools
+        </p>
+      </div>
+    </div>
+
+    <script>
+      window.onload = fetchDocuments;
+    </script>
+  </body>
+</html>
